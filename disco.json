@@ -1,0 +1,11 @@
+{
+  "version": "1.0",
+  "services": {
+    "web": {
+      "port": 8080,
+      "health": {
+        "command": "curl -f http://localhost:8080/api/current || exit 1"
+      }
+    }
+  }
+}
