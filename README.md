@@ -167,6 +167,26 @@ src/main/resources/
     └── app.js
 ```
 
+## Production Deployment (Disco.cloud)
+
+This app is designed to deploy to [disco.cloud](https://disco.cloud) using the included `disco.json` configuration.
+
+### Deploy to Disco.cloud
+
+1. **Deploy PostgreSQL** (separate project):
+   - Create a new Disco project from a minimal repo
+   - Use the configuration in `docs/DISCO_DEPLOYMENT.md`
+   - Set `POSTGRES_PASSWORD` in Disco dashboard
+
+2. **Deploy this app**:
+   - Push to GitHub
+   - Create Disco project from this repo
+   - Set environment variables in dashboard:
+     - `DATABASE_URL=jdbc:postgresql://postgres-project.local.disco:5432/ordervschaos`
+     - `DATABASE_PASSWORD=your_password`
+
+See `docs/DISCO_DEPLOYMENT.md` for complete instructions.
+
 ## Testing
 
 Run tests with:
@@ -178,77 +198,37 @@ Run tests with:
 ## Common Issues
 
 ### "JAVA_HOME is not set"
-Set JAVA_HOME to your JDK installation:
 ```powershell
 $env:JAVA_HOME = "C:\Users\YOUR_USERNAME\AppData\Local\Programs\IntelliJ IDEA\jbr"
 $env:PATH = "$env:JAVA_HOME\bin;$env:PATH"
 ```
 
 ### "password authentication failed"
-Make sure DATABASE_PASSWORD environment variable is set:
 ```powershell
 $env:DATABASE_PASSWORD = "your_actual_postgres_password"
 ```
 
 ### "relation does not exist"
-The database migrations haven't run. This usually means the database connection failed. Check:
-1. PostgreSQL is running
+Database migrations haven't run. Check:
+1. PostgreSQL is running (Docker: `docker ps`)
 2. Database `ordervschaos` exists
 3. DATABASE_PASSWORD is correct
 
 ### Port 8080 already in use
-Change the port in `src/main/resources/application.conf`:
-```
-ktor {
-    deployment {
-        port = 8081
-    }
-}
-```
-
-## Docker Deployment
-
-See [DOCKER.md](DOCKER.md) for complete Docker deployment instructions.
-
-### Quick Start with Docker
-
-**PowerShell:**
+Set environment variable:
 ```powershell
-# Copy environment file and set password
-Copy-Item .env.example .env
-# Edit .env and set DATABASE_PASSWORD=your_password
-
-# Build and run with Docker Compose
-docker-compose up --build
-
-# Access at http://localhost:8080
-```
-
-This runs both PostgreSQL and the application in separate containers (recommended approach).
-
-### Quick Start without Docker
-
-**PowerShell:**
-```powershell
-# Set environment variables
-$env:DATABASE_PASSWORD = "your_postgres_password"
-
-# Run the application
-.\gradlew.bat run
-
-# Access at http://localhost:8080
+$env:PORT = "8081"
 ```
 
 ## Stopping the Application
 
-**Local run:**
-- Press `Ctrl+C` in the terminal
+**Local run**: Press `Ctrl+C`
 
-**Docker:**
+**Docker containers**:
 ```powershell
-docker-compose down
+docker stop ordervschaos ordervschaos-postgres
 ```
 
-## Development
+## License
 
-The project structure:
+MIT

@@ -4,6 +4,129 @@ This file documents AI agent interactions and decisions made during development.
 
 ---
 
+## Session: 2026-02-15 - Simplified Deployment Strategy
+
+**Date**: February 15, 2026  
+**Agent**: GitHub Copilot CLI  
+**Context**: Simplifying deployment to match disco.cloud architecture
+
+### Issue Identified
+After researching disco.cloud deployment, discovered that docker-compose is not supported. The platform uses a simpler model where services are defined in disco.json and databases typically run as separate projects. This required removing docker-compose complexity and aligning local development with production deployment.
+
+### Changes Made
+
+#### 1. Removed Docker Compose
+- **Deleted**: `docker-compose.yml`
+- **Deleted**: `Dockerfile.single` (all-in-one container approach)
+- **Rationale**: Disco.cloud doesn't support compose; keeping unused files adds confusion
+
+#### 2. Simplified to Single Dockerfile
+- **Kept**: Multi-stage Dockerfile (Gradle build + JRE runtime)
+- **Approach**: PostgreSQL runs separately (Docker container or local install)
+- **Benefit**: Matches disco.cloud architecture exactly
+
+#### 3. Documentation Simplification
+- **Updated**: README.md with two paths:
+  - Local development (gradlew + PostgreSQL)
+  - Docker development (app container + PostgreSQL container)
+- **Removed**: Complex docker-compose instructions
+- **Added**: Clear disco.cloud deployment section
+- **Updated**: QUICKSTART.md with simpler workflows
+
+#### 4. Created disco.json
+- **File**: Root-level configuration for disco.cloud
+- **Config**: Web service on port 8080 with health check
+- **Documentation**: Full deployment guide in docs/DISCO_DEPLOYMENT.md
+
+### Key Decisions
+
+1. **PostgreSQL Separation**: Run database separately from app (matches disco.cloud model)
+2. **Local Flexibility**: Support both Docker and installed PostgreSQL locally
+3. **Production Match**: Docker development setup mirrors disco.cloud deployment
+4. **No Compose**: Removed docker-compose entirely to avoid confusion
+5. **Simple Defaults**: Default password "postgres" for local development
+
+### Technical Notes
+
+**Local Development - Option 1 (Docker PostgreSQL)**:
+```powershell
+# Start PostgreSQL
+docker run -d --name ordervschaos-postgres \
+  -e POSTGRES_PASSWORD=postgres \
+  -e POSTGRES_DB=ordervschaos \
+  -p 5432:5432 \
+  -v ordervschaos-data:/var/lib/postgresql/data \
+  postgres:18
+
+# Run app
+$env:DATABASE_PASSWORD = "postgres"
+.\gradlew.bat run
+```
+
+**Local Development - Option 2 (Installed PostgreSQL)**:
+```powershell
+# Create database (one time)
+$env:PGPASSWORD = "your_password"
+createdb -U postgres ordervschaos
+
+# Run app
+$env:DATABASE_PASSWORD = "your_password"
+.\gradlew.bat run
+```
+
+**Docker Development (matches production)**:
+```powershell
+# PostgreSQL container
+docker run -d --name ordervschaos-postgres ...
+
+# App container
+docker build -t ordervschaos .
+docker run -d --name ordervschaos \
+  -e DATABASE_URL="jdbc:postgresql://ordervschaos-postgres:5432/ordervschaos" \
+  -e DATABASE_PASSWORD="postgres" \
+  --link ordervschaos-postgres \
+  ordervschaos
+```
+
+**Disco.cloud Deployment**:
+- PostgreSQL: Separate disco project with postgres:18 image
+- App: This repo with disco.json configuration
+- Connection: Via internal DNS (postgres-project.local.disco:5432)
+
+### Files Modified
+- `README.md` - Simplified quick start and deployment sections
+- `QUICKSTART.md` - Updated all commands to match new approach
+- `.env.example` - Simplified with default postgres password
+- `AGENTS.md` - This entry
+
+### Files Created
+- `disco.json` - Disco.cloud service configuration
+
+### Files Deleted
+- `docker-compose.yml` - No longer needed
+- `Dockerfile.single` - All-in-one approach not used
+- Moved to docs/: BUILD_SUMMARY.md, DOCKER.md, DISCO_DEPLOYMENT.md
+
+### Git Commits
+- (Pending commit after this session)
+
+### Lessons Learned
+
+1. **Platform Constraints Drive Architecture**: Disco.cloud's lack of compose support actually simplifies deployment
+2. **Separation is Cleaner**: Database and app as separate concerns is better architecture
+3. **Development/Production Parity**: Running app and DB separately locally matches production
+4. **Less is More**: Removing docker-compose reduced complexity without losing functionality
+5. **Local Flexibility**: Supporting both Docker and installed PostgreSQL helps different developers
+
+### Future Considerations
+
+- Could add docker-compose back as "convenience tool" if users request it
+- Might want to add health check endpoint at /health explicitly
+- Consider adding sample postgres disco.json to repo for easy copy-paste
+- Could create shell script to automate PostgreSQL Docker container setup
+
+---
+
 ## Session: 2026-02-01 - Documentation PowerShell Migration
 
 **Date**: February 1, 2026  
