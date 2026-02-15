@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Order v Chaos - Daily Battle</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1 id="battle-title">Loading...</h1>
+        </header>
+
+        <main>
+            <div class="battle-bar-container">
+                <div class="battle-bar">
+                    <div id="left-bar" class="bar-segment left"></div>
+                    <div class="bar-divider"></div>
+                    <div id="right-bar" class="bar-segment right"></div>
+                </div>
+                <div class="scores">
+                    <span id="left-score">0</span>
+                    <span id="right-score">0</span>
+                </div>
+            </div>
+
+            <div class="buttons">
+                <button id="left-button" class="vote-button left-button" disabled>
+                    <span class="emoji" id="left-emoji">⏳</span>
+                    <span class="label">Increase <span id="left-label">...</span></span>
+                </button>
+                <button id="right-button" class="vote-button right-button" disabled>
+                    <span class="emoji" id="right-emoji">⏳</span>
+                    <span class="label">Increase <span id="right-label">...</span></span>
+                </button>
+            </div>
+        </main>
+
+        <section class="past-battles">
+            <h2>Past Battles</h2>
+            <div id="past-battles-list">
+                <p class="loading">Loading past battles...</p>
+            </div>
+        </section>
+    </div>
+
+    <script src="app.js"></script>
+</body>
+</html>

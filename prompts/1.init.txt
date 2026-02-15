@@ -1,0 +1,100 @@
+We are going to build a Kotlin fullstack app which is a shared web game/experience called Order v Chaos.
+
+## Tech stack:
+
+Kotlin, Ktor backend
+Postgres DB
+Simple static web frontend complimentary to Ktor - help me pick tooling for this
+
+## The game:
+
+Every day there will be a new pair of categories, and there will be a battle (popularity contest) between them. 
+The first day is Order vs Chaos (successive days e.g Cats/Dogs, Chocolate/Cheese, Mountain/Ocean, Hot/Cold)
+The battle is driven by anonymous web users who arrive at the site and press a button for their chosen side, e.g. either order or chaos, but they may click as many times as they want.
+There is no login system, no usernames, no social features.
+The main UI element of the screen is a giant tug-o-war, like a progress bar, which shows the left vs right side with a centre line that moves with the votes.
+
+There is only one screen to the app, which is the index page
+
+### Screen design:
+ _____________________
+|  
+|   Order v Chaos
+|
+|  [BBBBBBBBB|RRRR]
+|     
+|  (Increase ORDER) (Increase CHAOS)
+|
+| -------------------
+| Past battles
+| {Date} Chocolate (76%) vs Cheese (34%)
+| {Date} Etc.
+
+Heading - shows the battle title of the day
+Bar - shows the visual status of the two sides, coloured thematically e.g. order is blue and chaos is red
+Buttons - large buttons, one for each side, anon web users may click each as much as they like
+Dividing line/new section
+Past battles - list of past battle results with %age calculated from total votes of each
+
+## Data schema
+
+Where PK/int/string/timestamp is specified, use a suitable data type for the specified DB engine from above.
+
+### Themes table
+(Recylable themes for daily battles)
+ID : PK
+LeftSide : String (e.g. Order)
+RightSide : String (e.g. Chaos)
+LeftColour : String (e.g. hex code for blueish)
+RightColour: String 
+LeftEmoji : String
+RightEmoji : String
+Ordinal : Int (for ordering playlist of upcoming themes)
+
+### Battles table
+(Logs the outcomes of past battles)
+ID : PK
+ThemeID : Int FK to Themes
+LeftFinalScore : Int (total votes)
+RightFinalScore : Int (total votes)
+Started : timestamp (when the battle was started, midnight of day)
+Ended : timestamp (nullable)
+
+N.b. this table doesn't store percentage scores, just whole number votes - the server/middleware will calculate %ages
+
+The current battle is the most recent one where ended is null.
+
+### Votes table
+ID : PK
+BattleID : Int FK to Battles
+IsLeft : Bit
+Created: timestamp
+
+## Implementation Notes
+
+You as the LLM should come up with a library of at least 20 themes and prepopulate them.
+
+The battles should rotate at midnight UK time.
+
+The previous battle should be ended.
+
+The new current battle should be inserted into Battles and started.
+
+The scores for the current battle are initialised as 0/0.
+
+Think about locking and raise any design concerns.
+
+Think about how to run scheduled jobs under the target stack.
+
+## Before starting
+
+Raise any questions or highlight irregularities in this spec.
+
+---
+
+copilot --resume=00d78d10-ef24-4bad-9c46-932c26456122
+
+1. Vanilla JS
+2. Poll the backend every 10 secs
+3. Is this really a problem? The Votes table is write only, no modify. I don't think we need to worry about race conditions - just allow eventual consistency and fuzzy view of data
+

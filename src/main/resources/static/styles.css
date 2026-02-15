@@ -1,0 +1,194 @@
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    min-height: 100vh;
+    padding: 20px;
+    color: #333;
+}
+
+.container {
+    max-width: 800px;
+    margin: 0 auto;
+    background: white;
+    border-radius: 20px;
+    padding: 40px;
+    box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+}
+
+header {
+    text-align: center;
+    margin-bottom: 40px;
+}
+
+h1 {
+    font-size: 2.5rem;
+    font-weight: 700;
+    color: #2d3748;
+    margin-bottom: 10px;
+}
+
+.battle-bar-container {
+    margin: 40px 0;
+}
+
+.battle-bar {
+    height: 60px;
+    display: flex;
+    border-radius: 30px;
+    overflow: hidden;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+    position: relative;
+}
+
+.bar-segment {
+    height: 100%;
+    transition: flex 0.5s ease;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: bold;
+    color: white;
+}
+
+.bar-segment.left {
+    border-radius: 30px 0 0 30px;
+}
+
+.bar-segment.right {
+    border-radius: 0 30px 30px 0;
+}
+
+.bar-divider {
+    width: 4px;
+    background: white;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.3);
+    z-index: 10;
+}
+
+.scores {
+    display: flex;
+    justify-content: space-between;
+    margin-top: 15px;
+    font-size: 1.5rem;
+    font-weight: 700;
+    color: #2d3748;
+}
+
+.buttons {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 20px;
+    margin: 40px 0;
+}
+
+.vote-button {
+    padding: 30px 20px;
+    border: none;
+    border-radius: 15px;
+    font-size: 1.1rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    color: white;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 10px;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+}
+
+.vote-button:hover:not(:disabled) {
+    transform: translateY(-3px);
+    box-shadow: 0 6px 20px rgba(0, 0, 0, 0.3);
+}
+
+.vote-button:active:not(:disabled) {
+    transform: translateY(-1px);
+}
+
+.vote-button:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+}
+
+.vote-button .emoji {
+    font-size: 3rem;
+}
+
+.vote-button .label {
+    text-transform: uppercase;
+    letter-spacing: 1px;
+}
+
+.past-battles {
+    margin-top: 60px;
+    padding-top: 40px;
+    border-top: 2px solid #e2e8f0;
+}
+
+.past-battles h2 {
+    font-size: 1.8rem;
+    margin-bottom: 20px;
+    color: #2d3748;
+}
+
+#past-battles-list {
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+}
+
+.past-battle {
+    padding: 20px;
+    background: #f7fafc;
+    border-radius: 10px;
+    border-left: 4px solid #667eea;
+}
+
+.past-battle-date {
+    font-size: 0.9rem;
+    color: #718096;
+    margin-bottom: 8px;
+}
+
+.past-battle-title {
+    font-size: 1.2rem;
+    font-weight: 600;
+    color: #2d3748;
+    margin-bottom: 5px;
+}
+
+.past-battle-result {
+    font-size: 1rem;
+    color: #4a5568;
+}
+
+.loading {
+    text-align: center;
+    color: #718096;
+    font-style: italic;
+}
+
+@media (max-width: 600px) {
+    .container {
+        padding: 20px;
+    }
+
+    h1 {
+        font-size: 1.8rem;
+    }
+
+    .buttons {
+        grid-template-columns: 1fr;
+    }
+
+    .vote-button {
+        padding: 25px 15px;
+    }
+}

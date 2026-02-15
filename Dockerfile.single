@@ -1,0 +1,43 @@
+# Single Container Dockerfile (Not Recommended)
+# This includes both PostgreSQL and the application in one container
+# Only use this for very specific use cases (demos, extreme simplicity)
+
+FROM ubuntu:22.04
+
+# Avoid prompts from apt
+ENV DEBIAN_FRONTEND=noninteractive
+
+# Install PostgreSQL, Java, and supervisor
+RUN apt-get update && \
+    apt-get install -y \
+    postgresql-14 \
+    openjdk-21-jre-headless \
+    supervisor \
+    curl \
+    && rm -rf /var/lib/apt/lists/*
+
+# Configure PostgreSQL
+USER postgres
+RUN /etc/init.d/postgresql start && \
+    psql --command "ALTER USER postgres WITH PASSWORD 'postgres';" && \
+    psql --command "CREATE DATABASE ordervschaos;"
+
+USER root
+
+# Copy application
+WORKDIR /app
+COPY build/libs/*.jar app.jar
+
+# Supervisor configuration
+COPY docker/supervisord.conf /etc/supervisor/conf.d/supervisord.conf
+
+# Expose port
+EXPOSE 8080
+
+# Environment variables
+ENV DATABASE_URL=jdbc:postgresql://localhost:5432/ordervschaos
+ENV DATABASE_USER=postgres
+ENV DATABASE_PASSWORD=postgres
+
+# Start supervisor (manages both PostgreSQL and app)
+CMD ["/usr/bin/supervisord", "-c", "/etc/supervisor/conf.d/supervisord.conf"]
