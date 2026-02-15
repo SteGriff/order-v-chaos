@@ -30,10 +30,5 @@ COPY --from=build /app/build/libs/*.jar app.jar
 # Expose port
 EXPOSE 8080
 
-# Set environment variables with defaults
-ENV DATABASE_URL=jdbc:postgresql://localhost:5432/ordervschaos
-ENV DATABASE_USER=postgres
-ENV DATABASE_PASSWORD=postgres
-
 # Run the application
 ENTRYPOINT ["java", "-jar", "app.jar"]
